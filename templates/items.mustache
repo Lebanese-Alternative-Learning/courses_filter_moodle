@@ -1,0 +1,27 @@
+<div class="">
+    <strong class="seachcountresults">{{#str}}totalcourses,block_courses_search{{/str}}: <span class="total-courses-found">{{totalcourses}}</span> </strong>
+
+
+    <div class="items row" style="width: 100%">
+
+
+        {{#courses}}
+            <div class="{{columns}}">
+
+                <a href="{{url}}" target="_blanck" class="item-box">
+                    <div class="item-image" style="background:url('{{image}}') center center no-repeat"></div>
+                    <span class="item-fullname">{{fullname}}</span>
+                    <!-- <span class="item-shortname">{{shortname}}</span> -->
+                    <span class="item-catname">{{categoryname}}</span>
+                    <!---<span  class="item-teachers">Teachers: {{teachers}}</span>-->
+                    <div class="text-center">
+                        <button class="btn btn-primary" style="width: 100% !important;">View Course</button>
+                    </div>
+                </a>
+            </div>
+        {{/courses}}
+        <div style="display: block;width: 100%">{{{pagination}}}</div>
+
+
+    </div>
+</div>

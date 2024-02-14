@@ -1,0 +1,27 @@
+<div class="row">
+    <div class="   {{#otherfields}} col-md-4 {{/otherfields}}
+        {{^otherfields}} col-md-12 {{/otherfields}}  f-element-row">
+        <input type="text" class="form-control form-control withclear rounded
+                     search_box" name="q" id="id_q" value="" placeholder="{{#str}}q_place,block_courses_search{{/str}}">
+    </div>
+    <div class="col-md-4 m-element-row"   {{#otherfields}} style="display: block" {{/otherfields}}
+        {{^otherfields}} style="display: none" {{/otherfields}}>
+        <div class="ui-widget">
+            <select class="form-control" name="course_category">
+                {{#categories}}
+                    <option value="{{catid}}">{{name}}</option>
+                {{/categories}}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4 l-element-row"  {{#otherfields}} style="display: block" {{/otherfields}}
+        {{^otherfields}} style="display: none" {{/otherfields}}>
+        <select class="form-control" name="select_order">
+            <option value="">{{#str}}selectorder,block_courses_search{{/str}}</option>
+            <option value="asc">A to Z</option>
+            <option value="desc">Z to A</option>
+        </select>
+    </div>
+</div>
+<hr>
+
