@@ -62,17 +62,66 @@ foreach ($fields as $field) {
 
             }
             if (!empty($submittedvalues)) {
-                $where[] = " data" . $field->shortname . ".value in (" . implode(',', $submittedvalues) . ") ";
+                $subwhere = [];
+                $subwhere[] = " data" . $field->shortname . ".value in (" . implode(',', $submittedvalues) . ") ";
+                for ($i = 1; $i <= 5; $i++) {
+                    $subshortname = $field->shortname . '_' . $i;
+                    $subfield = $DB->get_record('customfield_field', ['shortname' => $subshortname]);
+                    if ($subfield) {
+                        $join[] = " join {customfield_data} data" . $subshortname . " on data" . $subshortname . ".instanceid=crs.id
+                            and data" . $subshortname . ".fieldid=" . $subfield->id . "";
+                        $subwhere[] = " data" . $subshortname . ".value in (" . implode(',', $submittedvalues) . ") ";
+                    }
+                }
+                if (count($subwhere) > 1) {
+                    $where[] = " (" . implode(' or ', $subwhere) . ")";
+                } else {
+                    $where[] = " data" . $field->shortname . ".value in (" . implode(',', $submittedvalues) . ") ";
+                }
+
             }
             $op = 'x';
         }
         if ($op == 1) {//equal
-            $where[] = " data" . $field->shortname . ".value = $param ";
-            // $where_param[] = (int)$param;
+            $subwhere = [];
+            $subwhere[] = " data" . $field->shortname . ".value = $param ";
+            for ($i = 1; $i <= 5; $i++) {
+                $subshortname = $field->shortname . '_' . $i;
+                $subfield = $DB->get_record('customfield_field', ['shortname' => $subshortname]);
+                if ($subfield) {
+                    $join[] = " join {customfield_data} data" . $subshortname . " on data" . $subshortname . ".instanceid=crs.id
+                            and data" . $subshortname . ".fieldid=" . $subfield->id . "";
+                    $subwhere[] = " data" . $subshortname . ".value = $param ";
+                }
+            }
+            if (count($subwhere) > 1) {
+                $where[] = " (" . implode(' or ', $subwhere) . ")";
+            } else {
+                $where[] = " data" . $field->shortname . ".value = $param ";
+            }
         }
         if ($op == 2) {//equal
-            $where[] = " data" . $field->shortname . ".value like ? ";
-            $where_param[] = $param;
+
+            $subwhere = [];
+            $subwhere[] = " data" . $field->shortname . ".value like ? ";
+            for ($i = 1; $i <= 5; $i++) {
+                $subshortname = $field->shortname . '_' . $i;
+                $subfield = $DB->get_record('customfield_field', ['shortname' => $subshortname]);
+                if ($subfield) {
+                    $join[] = " join {customfield_data} data" . $subshortname . " on data" . $subshortname . ".instanceid=crs.id
+                            and data" . $subshortname . ".fieldid=" . $subfield->id . "";
+                    $subwhere[] = " data" . $subshortname . ".value  like ?  ";
+                    $where_param[] = $param;
+                }
+            }
+            if (count($subwhere) > 1) {
+                $where_param[] = $param;
+                $where[] = " (" . implode(' or ', $subwhere) . ")";
+            } else {
+                $where[] = " data" . $field->shortname . ".value = $param ";
+                $where_param[] = $param;
+            }
+
         }
         if ($op == 3) {//equal
             $where[] =
@@ -127,7 +176,6 @@ if (!empty($where_stmt)) {
     $where_stmt = ' and ' . $where_stmt;
 }
 $sql = $sql . $join . ' where crs.visible=1 and cat.visible=1 and 1    ' . $where_stmt . ' ' . $order_stmt;
-
 $sql_count = $sql_count . $join . ' where 1' . $where_stmt;
 
 $page = optional_param('page', 0, PARAM_INT);
